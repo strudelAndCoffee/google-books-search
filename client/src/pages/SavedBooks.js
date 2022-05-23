@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
-import { getMe, deleteBook } from '../utils/API';
+// import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
@@ -12,9 +13,9 @@ import { REMOVE_BOOK } from '../utils/mutations';
 
 const SavedBooks = () => {
   // GET_ME query
-  const [getMe] = useQuery(GET_ME);
-  const userData = await getMe();
-
+  const userData = useQuery(GET_ME); 
+  const [removeBook] = useMutation(REMOVE_BOOK);
+  
   // const [userData, setUserData] = useState({});
 
   // use this to determine if `useEffect()` hook needs to run again
@@ -49,7 +50,6 @@ const SavedBooks = () => {
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-    const [removeBook] = useMutation(REMOVE_BOOK);
 
     if (!token) {
       return false;
@@ -72,10 +72,11 @@ const SavedBooks = () => {
     // }
 
     try {
-      await removeBook({
+      const updatedUserData = await removeBook({
         variables: bookId
       })
 
+      console.log(updatedUserData);
       // function calls from old code block
       removeBookId(bookId);
     } catch (err) {
